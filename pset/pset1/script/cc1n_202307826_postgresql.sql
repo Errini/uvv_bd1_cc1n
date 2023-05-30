@@ -24,7 +24,6 @@ CREATE DATABASE uvv
  \c "dbname=uvv user=nicolas password=piscolone1"
  
  --Cria o esquema do banco de dados
-DROP SCHEMA if exists lojas;
 CREATE SCHEMA IF NOT EXISTS lojas AUTHORIZATION nicolas;
 ALTER USER nicolas
 SET SEARCH_PATH TO lojas, "$user", public;
