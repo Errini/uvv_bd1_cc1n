@@ -67,7 +67,7 @@ CREATE TABLE lojas.Lojas (
                 logo_ultima_atualizacao DATE,
                 CONSTRAINT pk_lojas PRIMARY KEY (loja_id)
 );
---uma 
+--checa os dados inseridos na coluna endereco_web e endereco_fisico garantindo que pelo menos um não seja nulo
 ALTER TABLE lojas.lojas ADD CONSTRAINT pelo_menos_um_endereco check(endereco_web IS NOT NULL OR endereco_fisico IS NOT NULL);
 
 COMMENT ON TABLE lojas.Lojas IS 'Tabela das Lojas da UVV';
