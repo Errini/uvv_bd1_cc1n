@@ -4,13 +4,13 @@
 --Exclui o banco de dados uvv somente se ele já existir
 DROP DATABASE IF EXISTS uvv;
 
---Exclui o usuário nicolas somente se ele já existir-
+--Exclui o usuário nicolas somente se ele já existir
 DROP USER if EXISTS nicolas;
 
---Cria o usuário nicolas--
+--Cria o usuário nicolas
 CREATE USER nicolas WITH createdb createrole encrypted password 'piscolone1';
 
---Cria o banco de dados lojas uvv--
+--Cria o banco de dados lojas uvv
 CREATE DATABASE uvv 
     WITH 
     OWNER = nicolas
