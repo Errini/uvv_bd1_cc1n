@@ -1,19 +1,24 @@
 --NICOLAS MARIO ERRINI
 --CC1N
 
---logando no superusuario postgres
+--Logando no superusuario postgres
+
 \c postgres postgres;
 
 --Exclui o banco de dados uvv somente se ele já existir
+
 DROP DATABASE IF EXISTS uvv;
 
 --Exclui o usuário nicolas somente se ele já existir
+
 DROP USER if EXISTS nicolas;
 
 --Cria o usuário nicolas--
+
 CREATE USER nicolas WITH createdb createrole encrypted password 'piscolone1';
 
 --Cria o banco de dados lojas uvv--
+
 CREATE DATABASE uvv 
     WITH 
     OWNER = nicolas
@@ -24,14 +29,17 @@ CREATE DATABASE uvv
     ALLOW_CONNECTIONS = true;
 	
 --Entrar no banco de dados uvv
+
  \c "dbname=uvv user=nicolas password=piscolone1"
  
  --Cria o esquema do banco de dados
+
 CREATE SCHEMA IF NOT EXISTS lojas AUTHORIZATION nicolas;
 ALTER USER nicolas
 SET SEARCH_PATH TO lojas, "$user", public;
 
 --Tabela dos produtos
+
 CREATE TABLE lojas.Produtos (
                 produto_id NUMERIC(38) NOT NULL,
                 nome VARCHAR(255) NOT NULL,
@@ -56,6 +64,7 @@ COMMENT ON COLUMN lojas.Produtos.imagem_charset IS 'Charset das Imagens das Loja
 COMMENT ON COLUMN lojas.Produtos.imagem_ultima_atualizacao IS 'Ultima Atualização das Imagens das Lojas UVV';
 
 --Tabela das lojas
+
 CREATE TABLE lojas.Lojas (
                 loja_id NUMERIC(38) NOT NULL,
                 nome VARCHAR(255) NOT NULL,
@@ -70,7 +79,8 @@ CREATE TABLE lojas.Lojas (
                 logo_ultima_atualizacao DATE,
                 CONSTRAINT pk_lojas PRIMARY KEY (loja_id)
 );
---checa os dados inseridos na coluna endereco_web e endereco_fisico garantindo que pelo menos um não seja nulo
+--Checa os dados inseridos na coluna endereco_web e endereco_fisico garantindo que pelo menos um não seja nulo
+
 ALTER TABLE lojas.lojas ADD CONSTRAINT pelo_menos_um_endereco check(endereco_web IS NOT NULL OR endereco_fisico IS NOT NULL);
 
 COMMENT ON TABLE lojas.Lojas IS 'Tabela das Lojas da UVV';
@@ -86,7 +96,8 @@ COMMENT ON COLUMN lojas.Lojas.logo_arquivo IS 'Arquivo da Logos das Loja UVV';
 COMMENT ON COLUMN lojas.Lojas.logo_charset IS 'Charset das Logos das Lojas UVV';
 COMMENT ON COLUMN lojas.Lojas.logo_ultima_atualizacao IS 'Ultima atualização das Logos das Lojas UVV';
 
---tabela dos estoques
+--Tabela dos estoques
+
 CREATE TABLE lojas.Estoques (
                 estoque_id NUMERIC(38) NOT NULL,
                 produto_id NUMERIC(38) NOT NULL,
@@ -100,7 +111,8 @@ COMMENT ON COLUMN lojas.Estoques.produto_id IS 'IDs dos produtos das Lojas UVV';
 COMMENT ON COLUMN lojas.Estoques.quantidade IS 'Quantidade de Estoque das Lojas UVV';
 COMMENT ON COLUMN lojas.Estoques.loja_id IS 'IDs referentes as Lojas UVV';
 
---tabela dos clientes
+--Tabela dos clientes
+
 CREATE TABLE lojas.Clientes (
                 cliente_id NUMERIC(38) NOT NULL,
                 nome VARCHAR(255) NOT NULL,
@@ -118,7 +130,8 @@ COMMENT ON COLUMN lojas.Clientes.telefone1 IS '1° Telefone dos clientes das Loj
 COMMENT ON COLUMN lojas.Clientes.telefone2 IS '2° Telefone dos clientes das Lojas UVV';
 COMMENT ON COLUMN lojas.Clientes.telefone3 IS '3° Telefone dos clientes das Lojas UVV';
 
---tabela dos envios
+--Tabela dos envios
+
 CREATE TABLE lojas.Envios (
                 envio_id NUMERIC(38) NOT NULL,
                 loja_id NUMERIC(38) NOT NULL,
@@ -128,7 +141,7 @@ CREATE TABLE lojas.Envios (
                 CONSTRAINT pk_envios PRIMARY KEY (envio_id)
 );
 
---checagem de status de envio
+--Checagem de status de envio
 
 ALTER TABLE lojas.Envios ADD CONSTRAINT status check (status in('CRIADO', 'ENVIADO', 'TRANSITO', 'ENTREGUE'));
 
@@ -139,7 +152,8 @@ COMMENT ON COLUMN lojas.Envios.cliente_id IS 'IDs dos Clientes das Lojas UVV';
 COMMENT ON COLUMN lojas.Envios.endereco_entrega IS 'Endereço de entrega do envio das Lojas UVV';
 COMMENT ON COLUMN lojas.Envios.status IS 'Status de envio das Lojas UVV';
 
---tabela dos pedidos
+--Tabela dos pedidos
+
 CREATE TABLE lojas.Pedidos (
                 pedido_id NUMERIC(38) NOT NULL,
                 data_hora TIMESTAMP NOT NULL,
@@ -148,7 +162,9 @@ CREATE TABLE lojas.Pedidos (
                 loja_id NUMERIC(38) NOT NULL,
                 CONSTRAINT pk_pedidos PRIMARY KEY (pedido_id)
 );
---checa os dados inseridos na coluna status garantindo que esteja como: COMPLETO, PAGO, CANCELADO, ABERTO, REEMBOLSADO OU ENVIADO
+
+--Checa os dados inseridos na coluna status garantindo que esteja como: COMPLETO, PAGO, CANCELADO, ABERTO, REEMBOLSADO OU ENVIADO
+
 ALTER TABLE lojas.Pedidos ADD CONSTRAINT status check (status in ('COMPLETO', 'PAGO', 'CANCELADO', 'ABERTO' ,'REEMBOLSADO', 'ENVIADO'));
 
 COMMENT ON TABLE lojas.Pedidos IS 'Pedidos da loja UVV';
@@ -158,7 +174,8 @@ COMMENT ON COLUMN lojas.Pedidos.cliente_id IS 'IDs dos Clientes das Lojas UVV';
 COMMENT ON COLUMN lojas.Pedidos.status IS 'Status dos pedidos das Lojas UVV';
 COMMENT ON COLUMN lojas.Pedidos.loja_id IS 'IDs referentes as Lojas UVV';
 
---tabela dos itens dos pedidos
+--Tabela dos itens dos pedidos
+
 CREATE TABLE lojas.Pedidos_Itens (
                 pedido_id NUMERIC(38) NOT NULL,
                 produto_id NUMERIC(38) NOT NULL,
@@ -176,7 +193,8 @@ COMMENT ON COLUMN lojas.Pedidos_Itens.preco_unitario IS 'Preço Unitario dos Ite
 COMMENT ON COLUMN lojas.Pedidos_Itens.quantidade IS 'Quantidade de Itens dos Pedidos das Lojas UVV';
 COMMENT ON COLUMN lojas.Pedidos_Itens.envio_id IS 'IDs dos Envios das Lojas UVV';
 
---adicionando chaves estrangeiras nas tabelas
+--Adicionando chaves estrangeiras nas tabelas
+
 ALTER TABLE lojas.Estoques ADD CONSTRAINT produtos_estoques_fk
 FOREIGN KEY (produto_id)
 REFERENCES lojas.Produtos (produto_id)
