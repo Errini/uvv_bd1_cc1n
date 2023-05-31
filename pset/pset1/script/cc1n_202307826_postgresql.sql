@@ -1,16 +1,19 @@
 --NICOLAS MARIO ERRINI
 --CC1N
 
+--logando no superusuario postgres
+\c postgres postgres;
+
 --Exclui o banco de dados uvv somente se ele já existir
 DROP DATABASE IF EXISTS uvv;
 
 --Exclui o usuário nicolas somente se ele já existir
 DROP USER if EXISTS nicolas;
 
---Cria o usuário nicolas
+--Cria o usuário nicolas--
 CREATE USER nicolas WITH createdb createrole encrypted password 'piscolone1';
 
---Cria o banco de dados lojas uvv
+--Cria o banco de dados lojas uvv--
 CREATE DATABASE uvv 
     WITH 
     OWNER = nicolas
@@ -145,7 +148,7 @@ CREATE TABLE lojas.Pedidos (
                 loja_id NUMERIC(38) NOT NULL,
                 CONSTRAINT pk_pedidos PRIMARY KEY (pedido_id)
 );
-
+--checa os dados inseridos na coluna status garantindo que esteja como: COMPLETO, PAGO, CANCELADO, ABERTO, REEMBOLSADO OU ENVIADO
 ALTER TABLE lojas.Pedidos ADD CONSTRAINT status check (status in ('COMPLETO', 'PAGO', 'CANCELADO', 'ABERTO' ,'REEMBOLSADO', 'ENVIADO'));
 
 COMMENT ON TABLE lojas.Pedidos IS 'Pedidos da loja UVV';
@@ -173,7 +176,7 @@ COMMENT ON COLUMN lojas.Pedidos_Itens.preco_unitario IS 'Preço Unitario dos Ite
 COMMENT ON COLUMN lojas.Pedidos_Itens.quantidade IS 'Quantidade de Itens dos Pedidos das Lojas UVV';
 COMMENT ON COLUMN lojas.Pedidos_Itens.envio_id IS 'IDs dos Envios das Lojas UVV';
 
-
+--adicionando chaves estrangeiras nas tabelas
 ALTER TABLE lojas.Estoques ADD CONSTRAINT produtos_estoques_fk
 FOREIGN KEY (produto_id)
 REFERENCES lojas.Produtos (produto_id)
